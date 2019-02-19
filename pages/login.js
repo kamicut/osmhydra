@@ -1,30 +1,32 @@
 import Button from '../components/button'
+import React, { Component } from 'react'
 
-class Login {
-  static async getInitialProps({ query }) {
+class Login extends Component {
+  static async getInitialProps ({ query }) {
     if (query.user) {
       return {
         user: query.user
       }
     }
   }
+
   render() {
     return (
       <section>
-        <h1>OSM with Hydra</h1>
+        <h1>Login Provider</h1>
+        <br />
         {
           this.props.user
             ? (
               <div>
-                <p className="measure-copy">You've never logged into this application</p>
-                <br />
-                <Button href="/auth/openstreetmap">Login with OSM</Button>
-              </div>)
-            : <Button href="/auth/logout">Logout</Button>
+                <h2>Welcome, {this.props.user.displayName}!</h2>
+                <Button href="/auth/logout">Logout</Button>
+              </div>
+            )
+            : <Button href="/auth/login">Login with OSM</Button>
         }
       </section>
     )
-
   }
 }
 

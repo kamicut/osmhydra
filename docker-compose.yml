@@ -17,9 +17,8 @@ services:
 
   hydra:
     image: oryd/hydra:v1.0.0-beta.9
-    links:
+    # links:
     # - db:db
-    - api:api
     ports:
     - 4444:4444
     - 4445:4445
@@ -28,6 +27,6 @@ services:
       serve all --dangerous-force-http
     environment:
       - OAUTH2_ISSUER_URL=http://localhost:4444
-      - OAUTH2_CONSENT_URL=http://api:8989/consent
-      - OAUTH2_LOGIN_URL=http://api:8989/login
+      - OAUTH2_CONSENT_URL=http://localhost:8989/consent
+      - OAUTH2_LOGIN_URL=http://localhost:8989/login
       - DATABASE_URL=memory
