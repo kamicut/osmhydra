@@ -1,5 +1,5 @@
-import Button from '../components/button'
 import React, { Component } from 'react'
+import Button from '../components/button'
 
 class Home extends Component {
   static async getInitialProps ({ query }) {
@@ -16,17 +16,19 @@ class Home extends Component {
         <h1>OSM with Hydra</h1>
         <p className="measure-copy">
           The purpose of this application is to demonstrate the ORY/Hydra Oauth2 server using OSM as the login middleware.
-      </p>
-        <br />
+        </p>
         {
           this.props.user
             ? (
-              <div>
+              <div className="mt4">
                 <h2>Welcome, {this.props.user.displayName}!</h2>
                 <Button href="/auth/logout">Logout</Button>
+                <div className="mt4">
+                  <a href='/clients'>Your OAuth2 clients</a>
+                </div>
               </div>
             )
-            : <Button href="/auth/openstreetmap">Login with OSM</Button>
+            : <Button href="/auth/login">Login with OSM</Button>
         }
       </section>
     )
