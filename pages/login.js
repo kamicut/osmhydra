@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 
 class Login extends Component {
   static async getInitialProps ({ query }) {
-    if (query.user) {
+    if (query) {
       return {
-        user: query.user
+        challenge: query.challenge
       }
     }
   }
@@ -14,17 +14,9 @@ class Login extends Component {
     return (
       <section>
         <h1>Login Provider</h1>
+        <p>OSM Hydra uses OSM as your login, connect your OSM account!</p>
         <br />
-        {
-          this.props.user
-            ? (
-              <div>
-                <h2>Welcome, {this.props.user.displayName}!</h2>
-                <Button href="/auth/logout">Logout</Button>
-              </div>
-            )
-            : <Button href="/auth/login">Login with OSM</Button>
-        }
+        <Button href={`/auth/openstreetmap?login_challenge=${this.props.challenge}`}>Login with OSM</Button>
       </section>
     )
   }

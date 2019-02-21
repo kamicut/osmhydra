@@ -15,7 +15,9 @@ class Clients extends Component {
     this.state = {
       loading: true,
       error: undefined,
+      redirectURI: '',
       clientName: '',
+      redirectURI: '',
       newClient: null
     }
 
@@ -24,6 +26,7 @@ class Clients extends Component {
     this.deleteClient = this.deleteClient.bind(this)
     this.refreshClients = this.refreshClients.bind(this)
     this.handleClientNameChange = this.handleClientNameChange.bind(this)
+    this.handleClientCallbackChange = this.handleClientCallbackChange.bind(this)
   }
 
   async getClients () {
@@ -41,7 +44,8 @@ class Clients extends Component {
     let res = await fetch('/api/clients', {
       method: 'POST',
       body: JSON.stringify({
-        client_name: this.state.clientName
+        client_name: this.state.clientName,
+        redirect_uris: [this.state.redirectURI]
       }),
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
@@ -67,6 +71,12 @@ class Clients extends Component {
   handleClientNameChange (e) {
     this.setState({
       clientName: e.target.value
+    })
+  }
+  
+  handleClientCallbackChange (e) {
+    this.setState({
+      redirectURI: e.target.value
     })
   }
 
@@ -128,11 +138,16 @@ class Clients extends Component {
         }
         <section>
           <h2>Add a new client</h2>
-          <form onSubmit={this.createClient}>
+          <form onSubmit={this.createClient} className="mw6">
             <label>Name: </label>
-            <input type="text" 
-              value={this.state.newClientName}
+            <input className="mt2 mb3 w-100 dib" type="text" 
+              placeholder="My app"
               onChange={this.handleClientNameChange}
+            />
+            <label>Callback URL: </label>
+            <input className="mt2 mb3 w-100 dib" type="text" 
+              placeholder="https://myapp/callback"
+              onChange={this.handleClientCallbackChange}
             />
             <br />
             <br />

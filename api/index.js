@@ -5,7 +5,7 @@ const session = require('express-session')
 const boom = require('express-boom')
 const hydra = require('./hydra')
 
-const { login, openstreetmap, ensureAuth } = require('./auth')
+const { openstreetmap, ensureAuth } = require('./auth')
 const { serverRuntimeConfig } = require('../next.config')
 
 const app = express()
@@ -28,7 +28,6 @@ app.use(session(sessionConfig))
 /**
  * Auth routes
  */
-app.get('/auth/login', login)
 app.get('/auth/openstreetmap', openstreetmap)
 app.get('/auth/openstreetmap/callback', openstreetmap)
 
@@ -46,8 +45,11 @@ app.get('/api/clients', ensureAuth(), async (req, res) => {
 })
 
 app.post('/api/clients', ensureAuth(), async (req, res) => {
-  console.log(req.body)
-  let client = await hydra.createClient(req.body)
+  let toCreate = Object.assign({}, req.body)
+  toCreate['scope'] = 'openid offline'
+  toCreate['response_types'] = ['code', 'id_token']
+  toCreate['grant_types'] = ['refresh_token', 'authorization_code']
+  let client = await hydra.createClient(toCreate)
   return res.send({ client })
 })
 

@@ -28,7 +28,7 @@ class Home extends Component {
                 </div>
               </div>
             )
-            : <Button href="/auth/login">Login with OSM</Button>
+            : <Button href="/auth/openstreetmap">Login with OSM</Button>
         }
       </section>
     )
