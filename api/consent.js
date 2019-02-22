@@ -62,9 +62,9 @@ function postConsent (app) {
           remember: Boolean(req.body.remember),
           remember_for: 3600
         })
-        console.log(accept.redirect_to)
         res.redirect(accept.redirect_to)
       } catch (e) {
+        console.log(e)
         next(e)
       }
     }

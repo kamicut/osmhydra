@@ -1,4 +1,5 @@
 const next = require('next')
+const bodyParser = require('body-parser')
 const api = require('./api')
 const { ensureLogin } = require('./api/auth')
 const { getLogin } = require('./api/login')
@@ -21,10 +22,21 @@ app.prepare().then(() => {
 
   api.get('/login', getLogin(app))
   api.get('/consent', getConsent(app))
-  api.post('/consent', postConsent(app))
+  api.post('/consent',
+    bodyParser.urlencoded({ extended: false }),
+    postConsent(app))
 
   api.get('*', (req, res) => {
     return handle(req, res)
+  })
+
+  /**
+   * Error handler
+   */
+  api.use(function (err, req, res, next) {
+    res.status(err.status || 500)
+    console.error('error', err)
+    res.send(err)
   })
 
   api.listen(PORT, () => {
