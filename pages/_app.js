@@ -24,7 +24,7 @@ class OSMHydra extends App {
           <link rel="icon" type="image/png" href="/static/favicon.png" />
           <style>{`body { margin: 0; background: #F4F4F4; color: #111 }`}</style>
         </Head>
-        <article className="code mw7 ma5">
+        <article className="code mw6 pa3 ma5 center bg-white ba bw2">
           <Component {...pageProps} />
         </article>
       </Container>

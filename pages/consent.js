@@ -25,13 +25,24 @@ class Consent extends Component {
         <form method="post">
           <input type="hidden" value={challenge} name="challenge" />
           <p>
-            Hi, {user}, <strong>{clientDisplayName}</strong> wants to access resources on your behalf and to:
+            Hi, {user}, <strong>{clientDisplayName}</strong> wants to access resources on your behalf and needs the following permissions:
           </p>
           {
             requested_scope.map(scope => {
+              let scopeLabel = ""
+              switch (scope) {
+                case 'offline': {
+                  scopeLabel = 'Offline access to your profile'
+                  break
+                }
+                case 'openid': {
+                  scopeLabel = 'Your user profile information'
+                  break
+                }
+              }
               return <div key={scope}>
-                <input type="checkbox" id={scope} value={scope} name="grant_scope" />
-                <label htmlFor={scope}>{scope}</label>
+                <input type="checkbox" readOnly="readonly" checked="checked" id={scope} value={scope} name="grant_scope" />
+                <label className="pl2" htmlFor={scope}>{scopeLabel}</label>
                 <br />
               </div>
             })
@@ -45,7 +56,7 @@ class Consent extends Component {
           </ul>
           <p>
             <input type="checkbox" id="remember" name="remember" value="1" />
-            <label htmlFor="remember">Do not ask me again</label>
+            <label className="pl2" htmlFor="remember">Do not ask me again</label>
           </p>
           <p>
             <input type="submit" name="submit" value="Allow access" />
