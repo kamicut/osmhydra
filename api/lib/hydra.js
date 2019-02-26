@@ -1,7 +1,12 @@
+/**
+ * Simple Hydra SDK
+ * Methods to interact with the Hydra API
+ */
+
 var fetch = require('node-fetch')
 var uj = require('url-join')
 
-const { serverRuntimeConfig } = require('../next.config')
+const { serverRuntimeConfig } = require('../../next.config')
 const hydraUrl = serverRuntimeConfig.HYDRA_ADMIN_URL
 
 var mockTlsTermination = {}

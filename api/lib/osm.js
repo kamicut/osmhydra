@@ -1,31 +1,14 @@
-
-
+/**
+ * OSM SDK
+ * 
+ * Route middleware to interact with OSM OAuth
+ */
 const passport = require('passport-light')
 const hydra = require('./hydra')
 const url = require('url')
 const OSMStrategy = require('passport-openstreetmap').Strategy
 
-const { serverRuntimeConfig, publicRuntimeConfig } = require('../next.config')
-
-// ensure a user is logged in (middleware)
-function ensureLogin () {
-  return function (req, res, next) {
-    if (req.session && !req.session.user) {
-      req.session.returnTo = req.raw ? (req.raw.originalURL || req.raw.url) : '/'
-      return res.redirect('/')
-    }
-    next()
-  }
-}
-
-function ensureAuth () {
-  return function (req, res, next) {
-    if (req.session && !req.session.user) {
-      return res.boom.unauthorized
-    }
-    next()
-  }
-}
+const { serverRuntimeConfig, publicRuntimeConfig } = require('../../next.config')
 
 // get an authentication token pair from openstreetmap
 function openstreetmap (req, res) {
@@ -48,8 +31,6 @@ function openstreetmap (req, res) {
     redirect: function (url, status) { res.redirect(url) },
     success: function (user) {
       req.session.user = user
-
-      console.log('challenge from callback', challenge)
       
       if (challenge) {
         hydra.acceptLoginRequest(challenge, {
@@ -78,7 +59,5 @@ function openstreetmap (req, res) {
 }
 
 module.exports = {
-  openstreetmap,
-  ensureLogin,
-  ensureAuth
+  openstreetmap
 }

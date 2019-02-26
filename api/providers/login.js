@@ -1,4 +1,8 @@
-const hydra = require('./hydra')
+/**
+ * Login Provider
+ */
+
+const hydra = require('../lib/hydra')
 const url = require('url')
 
 function getLogin (app) {

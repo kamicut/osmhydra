@@ -1,4 +1,8 @@
-const hydra = require('./hydra')
+/**
+ * Consent provider
+ */
+
+const hydra = require('../lib/hydra')
 const url = require('url')
 
 function getConsent (app) {

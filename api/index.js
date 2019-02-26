@@ -3,9 +3,12 @@ const bodyParser = require('body-parser')
 const compression = require('compression')
 const session = require('express-session')
 const boom = require('express-boom')
-const hydra = require('./hydra')
 
-const { openstreetmap, ensureAuth } = require('./auth')
+const { openstreetmap } = require('./lib/osm')
+const { ensureAuth, ensureLogin } = require('./lib/common')
+const { getLogin } = require('./providers/login')
+const { getConsent, postConsent} = require('./providers/consent')
+const { getClients, createClient, deleteClient } = require('./routes/client')
 const { serverRuntimeConfig } = require('../next.config')
 
 const app = express()
@@ -38,23 +41,45 @@ app.get('/auth/logout', (req, res) => {
   })
 })
 
-/** API routes */
-app.get('/api/clients', ensureAuth(), async (req, res) => {
-  let clients = await hydra.getClients()
-  return res.send({ clients })
-})
+/** 
+ * OAuth Client routes
+ */
+app.get('/api/clients', ensureAuth(), getClients)
+app.post('/api/clients', ensureAuth(), createClient)
+app.delete('/api/clients/:id', ensureAuth(), deleteClient)
 
-app.post('/api/clients', ensureAuth(), async (req, res) => {
-  let toCreate = Object.assign({}, req.body)
-  toCreate['scope'] = 'openid offline'
-  toCreate['response_types'] = ['code', 'id_token']
-  toCreate['grant_types'] = ['refresh_token', 'authorization_code']
-  let client = await hydra.createClient(toCreate)
-  return res.send({ client })
-})
+/** Nextjs Renders */
+function init(nextApp) {
+  const handle = nextApp.getRequestHandler()
 
-app.delete('/api/clients/:id', ensureAuth(), (req, res) => {
-  hydra.deleteClient(req.params.id).then(() => res.sendStatus(200))
-})
+  app.get('/', (req, res) => {
+    return nextApp.render(req, res, '/', { user: req.session.user })
+  })
 
-module.exports = app
+  app.get('/clients', ensureLogin(), (req, res) => {
+    return nextApp.render(req, res, '/clients', { user: req.session.user })
+  })
+
+  app.get('/login', getLogin(nextApp))
+  app.get('/consent', getConsent(nextApp))
+  app.post('/consent',
+    bodyParser.urlencoded({ extended: false }),
+    postConsent(nextApp))
+
+  app.get('*', (req, res) => {
+    return handle(req, res)
+  })
+
+  /**
+   * Error handler
+   */
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500)
+    console.error('error', err)
+    res.send(err)
+  })
+
+  return app
+}
+
+module.exports = init
