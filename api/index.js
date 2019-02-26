@@ -8,7 +8,8 @@ const { openstreetmap } = require('./lib/osm')
 const { ensureAuth, ensureLogin } = require('./lib/common')
 const { getLogin } = require('./providers/login')
 const { getConsent, postConsent} = require('./providers/consent')
-const { getClients, createClient, deleteClient } = require('./routes/client')
+const { getClients, createClient, deleteClient } = require('./manage/client')
+const { login, loginAccept } = require('./manage/login')
 const { serverRuntimeConfig } = require('../next.config')
 
 const app = express()
@@ -31,6 +32,8 @@ app.use(session(sessionConfig))
 /**
  * Auth routes
  */
+app.get('/manage/login', login)
+app.get('/manage/login/accept', loginAccept)
 app.get('/auth/openstreetmap', openstreetmap)
 app.get('/auth/openstreetmap/callback', openstreetmap)
 
@@ -44,9 +47,9 @@ app.get('/auth/logout', (req, res) => {
 /** 
  * OAuth Client routes
  */
-app.get('/api/clients', ensureAuth(), getClients)
-app.post('/api/clients', ensureAuth(), createClient)
-app.delete('/api/clients/:id', ensureAuth(), deleteClient)
+app.get('/manage/clients', ensureAuth(), getClients)
+app.post('/manage/clients', ensureAuth(), createClient)
+app.delete('/manage/clients/:id', ensureAuth(), deleteClient)
 
 /** Nextjs Renders */
 function init(nextApp) {

@@ -6,6 +6,7 @@
 const passport = require('passport-light')
 const hydra = require('./hydra')
 const url = require('url')
+const db = require('../db')
 const OSMStrategy = require('passport-openstreetmap').Strategy
 
 const { serverRuntimeConfig, publicRuntimeConfig } = require('../../next.config')
@@ -23,6 +24,13 @@ function openstreetmap (req, res) {
     consumerSecret: serverRuntimeConfig.OSM_CONSUMER_SECRET,
     callbackURL: `${publicRuntimeConfig.APP_URL}/auth/openstreetmap/callback?login_challenge=${encodeURIComponent(challenge)}`
   }, async (token, tokenSecret, profile, done) => {
+      await db('users').insert(
+        {
+          'id': profile.id,
+          'osmToken': token,
+          'osmTokenSecret': tokenSecret
+        }
+      )
     done(null, profile)
   })
 
@@ -30,11 +38,9 @@ function openstreetmap (req, res) {
     req: req,
     redirect: function (url, status) { res.redirect(url) },
     success: function (user) {
-      req.session.user = user
-      
       if (challenge) {
         hydra.acceptLoginRequest(challenge, {
-          subject: user.displayName,
+          subject: user.id,
           remember: true,
           remember_for: 9999
         }).then(response => {

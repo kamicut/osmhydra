@@ -4,6 +4,7 @@
 
 const hydra = require('../lib/hydra')
 const url = require('url')
+const { serverRuntimeConfig } = require('../../next.config')
 
 function getConsent (app) {
   return async (req, res, next) => {
@@ -12,10 +13,11 @@ function getConsent (app) {
 
     try {
       let consent = await hydra.getConsentRequest(challenge) // Check for challenge success
-      if (consent.skip) {
+      // We can skip if skip is set to yes or if the requesting app is the management UI
+      if (consent.skip || consent.client.client_id === serverRuntimeConfig.OSM_HYDRA_ID) { 
         let accept = await hydra.acceptConsentRequest(challenge, {
-          grant_scope: response.requested_scope,
-          grant_access_token_audience: response.requested_access_token_audience,
+          grant_scope: consent.requested_scope,
+          grant_access_token_audience: consent.requested_access_token_audience,
           session: {}
         })
 

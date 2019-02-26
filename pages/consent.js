@@ -31,12 +31,20 @@ class Consent extends Component {
             requested_scope.map(scope => {
               let scopeLabel = ""
               switch (scope) {
+                case 'clients': {
+                  scopeLabel = 'Read and update your OAuth clients'
+                  break
+                }
                 case 'offline': {
                   scopeLabel = 'Offline access to your profile'
                   break
                 }
                 case 'openid': {
                   scopeLabel = 'Your user profile information'
+                  break
+                }
+                default: {
+                  scopeLabel = 'Unknown scope'
                   break
                 }
               }

@@ -13,6 +13,9 @@ function getLogin (app) {
 
     try {
       let { subject, skip } = await hydra.getLoginRequest(challenge)
+
+      // TODO check if the user has revoked their OSM token
+
       if (skip) {
         const { redirect_to } = await hydra.acceptLoginRequest(challenge, { subject })
         res.redirect(redirect_to)
