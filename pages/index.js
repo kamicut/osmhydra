@@ -21,8 +21,8 @@ class Home extends Component {
           this.props.user
             ? (
               <div className="mt4">
-                <h2>Welcome, {this.props.user.displayName}!</h2>
-                <Button href="/auth/logout">Logout</Button>
+                <h2>Welcome, {this.props.user}!</h2>
+                <Button href="/manage/logout">Logout</Button>
                 <div className="mt4">
                   <a href='/clients'>Your OAuth2 clients</a>
                 </div>

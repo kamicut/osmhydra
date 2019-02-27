@@ -5,6 +5,7 @@
 
 var fetch = require('node-fetch')
 var uj = require('url-join')
+const qs = require('qs')
 
 const { serverRuntimeConfig } = require('../../next.config')
 const hydraUrl = serverRuntimeConfig.HYDRA_ADMIN_URL
@@ -130,6 +131,29 @@ function deleteClient(id) {
   )
 }
 
+/**
+ * Check if an access token is valid
+ * 
+ * @param {String} token Access Token
+ */
+function introspect (token) {
+  const body = qs.stringify({ token })
+  return fetch(
+    uj(hydraUrl, '/oauth2/introspect'), {
+      method: 'POST',
+      body,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        ...mockTlsTermination
+      }
+    })
+    .then(r => r.json())
+    .then((body) => {
+      return body
+    })
+}
+
 var hydra = {
   // Fetches information on a login request.
   getLoginRequest: function (challenge) {
@@ -157,7 +181,8 @@ var hydra = {
   },
   createClient,
   deleteClient,
-  getClients
+  getClients,
+  introspect
 };
 
 module.exports = hydra;

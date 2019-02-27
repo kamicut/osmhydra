@@ -24,13 +24,25 @@ function openstreetmap (req, res) {
     consumerSecret: serverRuntimeConfig.OSM_CONSUMER_SECRET,
     callbackURL: `${publicRuntimeConfig.APP_URL}/auth/openstreetmap/callback?login_challenge=${encodeURIComponent(challenge)}`
   }, async (token, tokenSecret, profile, done) => {
-      await db('users').insert(
+    let conn = await db()
+    let [user] = await conn('users').where('id', profile.id)
+    if (user) {
+      await conn('users').where('id', profile.id).update(
+        {
+          'osmToken': token,
+          'osmTokenSecret': tokenSecret
+        }
+      )
+    } else {
+      await conn('users').insert(
         {
           'id': profile.id,
           'osmToken': token,
           'osmTokenSecret': tokenSecret
         }
       )
+
+    }
     done(null, profile)
   })
 

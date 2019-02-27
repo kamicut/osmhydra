@@ -20,6 +20,7 @@
     "node-fetch": "^2.3.0",
     "passport-light": "^1.0.1",
     "passport-openstreetmap": "^0.1.2",
+    "qs": "^6.6.0",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "simple-oauth2": "^2.2.1",

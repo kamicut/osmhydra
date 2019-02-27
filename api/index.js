@@ -5,12 +5,12 @@ const session = require('express-session')
 const boom = require('express-boom')
 
 const { openstreetmap } = require('./lib/osm')
-const { ensureAuth, ensureLogin } = require('./lib/common')
 const { getLogin } = require('./providers/login')
 const { getConsent, postConsent} = require('./providers/consent')
 const { getClients, createClient, deleteClient } = require('./manage/client')
-const { login, loginAccept } = require('./manage/login')
+const { login, loginAccept, logout } = require('./manage/login')
 const { serverRuntimeConfig } = require('../next.config')
+const { attachUser, protected } = require('./manage/authz')
 
 const app = express()
 
@@ -32,24 +32,21 @@ app.use(session(sessionConfig))
 /**
  * Auth routes
  */
+app.use(attachUser())
 app.get('/manage/login', login)
 app.get('/manage/login/accept', loginAccept)
+app.get('/manage/logout', logout)
+
 app.get('/auth/openstreetmap', openstreetmap)
 app.get('/auth/openstreetmap/callback', openstreetmap)
 
-app.get('/auth/logout', (req, res) => {
-  req.session.destroy(function (err) {
-    if (err) console.error(err)
-    res.redirect('/')
-  })
-})
 
 /** 
  * OAuth Client routes
  */
-app.get('/manage/clients', ensureAuth(), getClients)
-app.post('/manage/clients', ensureAuth(), createClient)
-app.delete('/manage/clients/:id', ensureAuth(), deleteClient)
+app.get('/manage/clients', protected(), getClients)
+app.post('/manage/clients', protected(), createClient)
+app.delete('/manage/clients/:id', protected(), deleteClient)
 
 /** Nextjs Renders */
 function init(nextApp) {
@@ -59,7 +56,7 @@ function init(nextApp) {
     return nextApp.render(req, res, '/', { user: req.session.user })
   })
 
-  app.get('/clients', ensureLogin(), (req, res) => {
+  app.get('/clients', protected(), (req, res) => {
     return nextApp.render(req, res, '/clients', { user: req.session.user })
   })
 

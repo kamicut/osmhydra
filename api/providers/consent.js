@@ -70,7 +70,7 @@ function postConsent (app) {
         })
         res.redirect(accept.redirect_to)
       } catch (e) {
-        console.log(e)
+        console.error(e)
         next(e)
       }
     }

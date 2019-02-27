@@ -30,7 +30,7 @@ class Clients extends Component {
   }
 
   async getClients () {
-    let res = await fetch('/api/clients')
+    let res = await fetch('/manage/clients')
     if (res.status == 200) {
       return await res.json()
     }
@@ -41,7 +41,7 @@ class Clients extends Component {
 
   async createClient(e) {
     e.preventDefault()
-    let res = await fetch('/api/clients', {
+    let res = await fetch('/manage/clients', {
       method: 'POST',
       body: JSON.stringify({
         client_name: this.state.clientName,
@@ -64,7 +64,7 @@ class Clients extends Component {
   }
 
   async deleteClient(id) {
-    await fetch(`/api/clients/${id}`, { method: 'DELETE' })
+    await fetch(`/manage/clients/${id}`, { method: 'DELETE' })
     await this.refreshClients()
   }
 
@@ -88,8 +88,10 @@ class Clients extends Component {
         loading: false
       })
     } catch (e) {
+      console.error(e)
       this.setState({
         error: e,
+        clients: [],
         loading: false
       })
     }
@@ -101,7 +103,7 @@ class Clients extends Component {
 
   render () {
     if (this.state.loading) return <div>Loading...</div>
-    if (this.state.error) return <div> {this.state.error} </div>
+    if (this.state.error) return <div> {this.state.error.message} </div>
 
     let clients = this.state.clients
     let clientSection = <p className="measure-copy">No clients created</p>

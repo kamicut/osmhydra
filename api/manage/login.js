@@ -1,5 +1,6 @@
 const { serverRuntimeConfig, publicRuntimeConfig } = require('../../next.config')
 const jwt = require('jsonwebtoken')
+const db = require('../db')
 
 const credentials = {
   client: {
@@ -37,7 +38,6 @@ function login (req, res) {
 }
 
 async function loginAccept (req, res) {
-  const db = require('../db')()
   const { code, state } = req.query
   /**
    * Token exchange with CSRF handling
@@ -62,8 +62,9 @@ async function loginAccept (req, res) {
       const { sub } = jwt.decode(result.id_token)
 
       // Store access token and refresh token
-      await db('users').where('id', sub).insert({
-        manageToken: result
+      let conn = await db()
+      await conn('users').where('id', sub).update({
+        manageToken: JSON.stringify(result)
       })
       
       // Store id token in session
@@ -71,13 +72,26 @@ async function loginAccept (req, res) {
       return res.redirect('/')
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
       return res.status(500).json('Authentication failed')
     }
   }
 }
 
+/**
+ * Logout deletes the session from the manage app
+ * @param {*} req 
+ * @param {*} res 
+ */
+function logout (req, res) {
+  req.session.destroy(function (err) {
+    if (err) console.error(err)
+    res.redirect('/')
+  })
+}
+
 module.exports = {
   login,
-  loginAccept
+  loginAccept,
+  logout
 }

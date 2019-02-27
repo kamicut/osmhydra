@@ -3,6 +3,8 @@
  */
 
 const hydra = require('../lib/hydra')
+const { serverRuntimeConfig } = require('../../next.config')
+const manageId = serverRuntimeConfig.OSM_HYDRA_ID
 
 /**
  * Get OAuth clients from Hydra
@@ -11,7 +13,11 @@ const hydra = require('../lib/hydra')
  */
 async function getClients (req, res) {
   let clients = await hydra.getClients()
-  return res.send({ clients })
+  
+  // Remove first party app from list
+  let filteredClients = clients.filter(c => c.client_id !== manageId)
+
+  return res.send({ clients: filteredClients })
 }
 
 /**
