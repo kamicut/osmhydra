@@ -28,7 +28,7 @@ class Home extends Component {
                 </div>
               </div>
             )
-            : <Button href="/manage/login">Login with OSM</Button>
+            : <Button href="/manage/login">Sign in →</Button>
         }
       </section>
     )

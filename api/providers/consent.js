@@ -4,7 +4,22 @@
 
 const hydra = require('../lib/hydra')
 const url = require('url')
+const db = require('../db')
 const { serverRuntimeConfig } = require('../../next.config')
+const { path } = require('ramda')
+
+async function idTokenExtraParams (sub) {
+  const conn = await db()
+  const [user] = await conn('users').where('id', sub)
+  const profile = JSON.parse(user.profile)
+  const displayName = profile.displayName || consent.subject
+  const picture = path(['_xml2json', 'user', 'img', '@', 'href'], profile)
+    || `https://www.gravatar.com/avatar/${sub}?d=identicon`
+  return {
+    preferred_username: displayName,
+    picture
+  }
+}
 
 function getConsent (app) {
   return async (req, res, next) => {
@@ -13,12 +28,16 @@ function getConsent (app) {
 
     try {
       let consent = await hydra.getConsentRequest(challenge) // Check for challenge success
+      let idToken = await idTokenExtraParams(consent.subject)
+
       // We can skip if skip is set to yes or if the requesting app is the management UI
       if (consent.skip || consent.client.client_id === serverRuntimeConfig.OSM_HYDRA_ID) { 
         let accept = await hydra.acceptConsentRequest(challenge, {
           grant_scope: consent.requested_scope,
           grant_access_token_audience: consent.requested_access_token_audience,
-          session: {}
+          session: {
+            id_token: idToken
+          }
         })
 
         res.redirect(accept.redirect_to)
@@ -26,7 +45,7 @@ function getConsent (app) {
         app.render(req, res, '/consent', {
           challenge: challenge,
           requested_scope: consent.requested_scope,
-          user: consent.subject,
+          user: idToken.preferred_username,
           client: consent.client
         })
       }
@@ -61,9 +80,12 @@ function postConsent (app) {
 
       try {
         const consent = await hydra.getConsentRequest(challenge)
+        let idToken = await idTokenExtraParams(consent.subject)
         let accept = await hydra.acceptConsentRequest(challenge, {
           grant_scope,
-          session: {},
+          session: {
+            id_token: idToken
+          },
           grant_access_token_audience: consent.requested_access_token_audience,
           remember: Boolean(req.body.remember),
           remember_for: 3600

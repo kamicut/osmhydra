@@ -30,7 +30,8 @@ function openstreetmap (req, res) {
       await conn('users').where('id', profile.id).update(
         {
           'osmToken': token,
-          'osmTokenSecret': tokenSecret
+          'osmTokenSecret': tokenSecret,
+          'profile': JSON.stringify(profile)
         }
       )
     } else {
@@ -38,7 +39,8 @@ function openstreetmap (req, res) {
         {
           'id': profile.id,
           'osmToken': token,
-          'osmTokenSecret': tokenSecret
+          'osmTokenSecret': tokenSecret,
+          profile: JSON.stringify(profile)
         }
       )
 

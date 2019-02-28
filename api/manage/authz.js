@@ -28,7 +28,9 @@ function attachUser () {
         // We have an id_token, let's check if it's still valid
         const decoded = jwt.decode(req.session.idToken)
         if (assertAlive(decoded)) {
-          req.session.user = decoded.sub
+          req.session.user_id = decoded.sub
+          req.session.user = decoded.preferred_username
+          req.session.user_picture = decoded.picture
           return next()
         } else {
           // no longer alive, let's flush the session
@@ -59,7 +61,7 @@ function protected() {
       try {
 
         let conn = await db()
-        let [userTokens] = await conn('users').where('id', req.session.user)
+        let [userTokens] = await conn('users').where('id', req.session.user_id)
         let result = await hydra.introspect(JSON.parse(userTokens.manageToken).access_token)
         if (result && result.active) {
           return next()

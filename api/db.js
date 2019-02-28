@@ -9,6 +9,7 @@ module.exports = async function db () {
     if (!exists) {
       await knex.schema.createTable('users', db => {
         db.text('id').primary()
+        db.json('profile')
         db.json('manageToken')
         db.text('osmToken')
         db.text('osmTokenSecret')

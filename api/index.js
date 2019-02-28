@@ -3,7 +3,12 @@ const bodyParser = require('body-parser')
 const compression = require('compression')
 const session = require('express-session')
 const boom = require('express-boom')
+const pino = require('pino')
+const expressPino = require('express-pino-logger')
 
+/**
+ * Route imports
+ */
 const { openstreetmap } = require('./lib/osm')
 const { getLogin } = require('./providers/login')
 const { getConsent, postConsent} = require('./providers/consent')
@@ -14,12 +19,19 @@ const { attachUser, protected } = require('./manage/authz')
 
 const app = express()
 
+/**
+ * Middleware
+ */
 app.use(bodyParser.json())
 app.use(compression())
 app.use(boom())
 
-const SESSION_SECRET = serverRuntimeConfig.SESSION_SECRET || 'super-secret-sessions'
+app.use(expressPino({
+  logger: pino({ prettyPrint: true })
+}))
 
+
+const SESSION_SECRET = serverRuntimeConfig.SESSION_SECRET || 'super-secret-sessions'
 let sessionConfig = {
   secret: SESSION_SECRET,
   resave: false,
