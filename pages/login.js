@@ -16,7 +16,7 @@ class Login extends Component {
         <h1>Login Provider</h1>
         <p>OSM Hydra uses OSM as your login, connect your OSM account!</p>
         <br />
-        <Button href={`/auth/openstreetmap?login_challenge=${this.props.challenge}`}>Login with OSM</Button>
+        <Button href={`/oauth/openstreetmap?login_challenge=${this.props.challenge}`}>Login with OSM</Button>
       </section>
     )
   }

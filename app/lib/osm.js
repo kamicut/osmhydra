@@ -22,7 +22,7 @@ function openstreetmap (req, res) {
     userAuthorizationURL: 'https://www.openstreetmap.org/oauth/authorize',
     consumerKey: serverRuntimeConfig.OSM_CONSUMER_KEY,
     consumerSecret: serverRuntimeConfig.OSM_CONSUMER_SECRET,
-    callbackURL: `${publicRuntimeConfig.APP_URL}/auth/openstreetmap/callback?login_challenge=${encodeURIComponent(challenge)}`
+    callbackURL: `${publicRuntimeConfig.APP_URL}/oauth/openstreetmap/callback?login_challenge=${encodeURIComponent(challenge)}`
   }, async (token, tokenSecret, profile, done) => {
     let conn = await db()
     let [user] = await conn('users').where('id', profile.id)

@@ -27,6 +27,6 @@ services:
       serve all --dangerous-force-http
     environment:
       - OAUTH2_ISSUER_URL=http://localhost:4444
-      - OAUTH2_CONSENT_URL=http://localhost:8989/consent
-      - OAUTH2_LOGIN_URL=http://localhost:8989/login
+      - OAUTH2_CONSENT_URL=http://localhost:8989/oauth/consent
+      - OAUTH2_LOGIN_URL=http://localhost:8989/oauth/login
       - DATABASE_URL=memory

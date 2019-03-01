@@ -28,7 +28,7 @@ var generateState = function(length) {
 function login (req, res) {
   let state = generateState(24)
   const authorizationUri = oauth2.authorizationCode.authorizeURL({
-    redirect_uri: `${publicRuntimeConfig.APP_URL}/manage/login/accept`,
+    redirect_uri: `${publicRuntimeConfig.APP_URL}/login/accept`,
     scope: 'openid clients',
     state
   })
@@ -54,7 +54,7 @@ async function loginAccept (req, res) {
     // Create options for token exchange
     const options = {
       code,
-      redirect_uri: `${publicRuntimeConfig.APP_URL}/manage/login/accept`
+      redirect_uri: `${publicRuntimeConfig.APP_URL}/login/accept`
     }
 
     try {

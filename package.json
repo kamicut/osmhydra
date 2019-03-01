@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "NODE_ENV=development node server.js",
+    "dev": "NODE_ENV=development node app/index.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node app/index.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

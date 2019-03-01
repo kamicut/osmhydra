@@ -30,7 +30,7 @@ class Clients extends Component {
   }
 
   async getClients () {
-    let res = await fetch('/manage/clients')
+    let res = await fetch('/api/clients')
     if (res.status == 200) {
       return await res.json()
     }
@@ -41,7 +41,7 @@ class Clients extends Component {
 
   async createClient(e) {
     e.preventDefault()
-    let res = await fetch('/manage/clients', {
+    let res = await fetch('/api/clients', {
       method: 'POST',
       body: JSON.stringify({
         client_name: this.state.clientName,
@@ -64,7 +64,7 @@ class Clients extends Component {
   }
 
   async deleteClient(id) {
-    await fetch(`/manage/clients/${id}`, { method: 'DELETE' })
+    await fetch(`/api/clients/${id}`, { method: 'DELETE' })
     await this.refreshClients()
   }
 

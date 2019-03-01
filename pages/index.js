@@ -22,13 +22,13 @@ class Home extends Component {
             ? (
               <div className="mt4">
                 <h2>Welcome, {this.props.user}!</h2>
-                <Button href="/manage/logout">Logout</Button>
+                <Button href="/logout">Logout</Button>
                 <div className="mt4">
                   <a href='/clients'>Your OAuth2 clients</a>
                 </div>
               </div>
             )
-            : <Button href="/manage/login">Sign in →</Button>
+            : <Button href="/login">Sign in →</Button>
         }
       </section>
     )
