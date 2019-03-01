@@ -22,10 +22,11 @@ class Home extends Component {
             ? (
               <div className="mt4">
                 <h2>Welcome, {this.props.user}!</h2>
+                <ul className="mt4 mb4">
+                  <li><a href='/clients'>Your OAuth2 clients</a></li>
+                  <li><a href='/profile'>Your Profile</a></li>
+                </ul>
                 <Button href="/logout">Logout</Button>
-                <div className="mt4">
-                  <a href='/clients'>Your OAuth2 clients</a>
-                </div>
               </div>
             )
             : <Button href="/login">Sign in →</Button>

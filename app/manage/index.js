@@ -47,8 +47,16 @@ function manageRouter (nextApp) {
   router.post('/api/clients', protected(), createClient)
   router.delete('/api/clients/:id', protected(), deleteClient)
 
+  /**
+   * Page renders
+   */
   router.get('/clients', protected(), (req, res) => {
     return nextApp.render(req, res, '/clients', { user: req.session.user })
+  })
+
+  router.get('/profile', protected(), (req, res) => {
+    const { user, user_picture } = req.session
+    return nextApp.render(req, res, '/profile', { user, user_picture })
   })
 
   return router
