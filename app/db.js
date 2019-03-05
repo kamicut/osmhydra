@@ -5,14 +5,23 @@ const knex = require('knex')({
 
 module.exports = async function db () {
   try {
-    const exists = await knex.schema.hasTable('users')
-    if (!exists) {
+    const existsUsers = await knex.schema.hasTable('users')
+    if (!existsUsers) {
       await knex.schema.createTable('users', db => {
         db.text('id').primary()
         db.json('profile')
         db.json('manageToken')
         db.text('osmToken')
         db.text('osmTokenSecret')
+      })
+    }
+
+    const existsPlaces = await knex.schema.hasTable('places')
+    if (!existsPlaces) {
+      await knex.schema.createTable('places', db => {
+        db.increments()
+        db.text('user').references('id').inTable('users').onDelete('CASCADE')
+        db.json('center')
       })
     }
   } catch (error) {

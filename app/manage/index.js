@@ -1,6 +1,7 @@
 const router = require('express-promise-router')()
 
 const { getClients, createClient, deleteClient } = require('./client')
+const { getPlaces, createPlace, deletePlace } = require('./places')
 const { login, loginAccept, logout } = require('./login')
 const { attachUser, protected } = require('./authz')
 const { serverRuntimeConfig } = require('../../next.config')
@@ -23,8 +24,9 @@ function manageRouter (nextApp) {
     saveUninitialized: true,
     expires: new Date(Date.now() + (30 * 86400 * 1000))
   }
-  router.use(session(sessionConfig))
-  router.use(attachUser())
+
+  const sessionMiddleware = [session(sessionConfig), attachUser()]
+  router.use(sessionMiddleware)
 
   /**
    * Home page
@@ -37,7 +39,7 @@ function manageRouter (nextApp) {
    * Logging in to manage app
    */
   router.get('/login', login)
-  router.get('/login/accept', loginAccept)
+  router.get('/login/accept',loginAccept)
   router.get('/logout', logout)
 
   /**
@@ -47,8 +49,24 @@ function manageRouter (nextApp) {
   router.post('/api/clients', protected(), createClient)
   router.delete('/api/clients/:id', protected(), deleteClient)
 
+  /**
+   * List / Create / Delete places
+   */
+  router.get('/api/places', protected(), getPlaces)
+  router.post('/api/places', protected(), createPlace)
+  router.delete('/api/places/:id', protected(), deletePlace)
+
+  /**
+   * Page renders
+   */
   router.get('/clients', protected(), (req, res) => {
-    return nextApp.render(req, res, '/clients', { user: req.session.user })
+    const { user, user_picture } = req.session
+    return nextApp.render(req, res, '/clients', { user, user_picture })
+  })
+
+  router.get('/profile', protected(), (req, res) => {
+    const { user, user_picture } = req.session
+    return nextApp.render(req, res, '/profile', { user, user_picture })
   })
 
   return router
