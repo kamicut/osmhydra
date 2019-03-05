@@ -1,11 +1,9 @@
 import React from 'react'
 
 export default function Button ({href, onClick, children}) { 
-  return <div className="f6 link dim br1 ba bw2 ph3 pv2 mb2 dib dark-green pointer">
-  {
-      href 
-      ? <a href={href}>{children}</a>
-      : <div onClick={onClick}>{children}</div>
+  const commonStyle = "f6 link dim br1 ba bw2 ph3 pv2 mb2 dib dark-green pointer"
+  if (href) {
+    return <a href={href} className={`link dark-green ${commonStyle}`}>{children}</a>
   }
-  </div>
+  return <div onClick={onClick} className={commonStyle}>{children}</div>
 }
