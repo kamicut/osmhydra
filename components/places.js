@@ -131,17 +131,18 @@ export default class Places extends Component {
           places.map(place => {
             let center = JSON.parse(place.center)
             return (
-              <div className="flex mt3 mb5">
+              <div className="mt3 mb3">
                 <Map center={center} zoom={10} width={300} height={200} key={place.id} mouseEvents={false} touchEvents={false} >
                   <Marker anchor={center} payload={1} />
                 </Map>
-                <div className="ml3 flex-auto">
-                  <Button onClick={() => this.deletePlace(place.id)}>Delete</Button>
+                <div className="mt2">
+                  <Button small danger onClick={() => this.deletePlace(place.id)}>Delete</Button>
                 </div>
               </div>
             )
           })
         }
+        <br />
         {
           this.state.isEditing 
           ? <NewPlaceForm savePlace={this.savePlace} /> 
