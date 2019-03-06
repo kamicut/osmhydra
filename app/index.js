@@ -2,12 +2,10 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const boom = require('express-boom')
-const pino = require('pino')
 const next = require('next')
-const expressPino = require('express-pino-logger')
 
 const manageRouter = require('./manage')
-const oauthRouter = require('./providers')
+const oauthRouter = require('./oauth')
 
 const dev = process.env.NODE_ENV !== 'production'
 const PORT = process.env.PORT || 8989
@@ -21,7 +19,6 @@ const app = express()
 app.use(bodyParser.json())
 app.use(compression())
 app.use(boom())
-app.use(expressPino({ logger: pino({ prettyPrint: true }) }))
 
 /**
  * Initialize subapps after nextJS initializes
