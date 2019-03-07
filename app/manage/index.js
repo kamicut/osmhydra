@@ -1,11 +1,13 @@
 const router = require('express-promise-router')()
+const session = require('express-session')
+const expressPino = require('express-pino-logger')
 
 const { getClients, createClient, deleteClient } = require('./client')
 const { getPlaces, createPlace, deletePlace } = require('./places')
 const { login, loginAccept, logout } = require('./login')
 const { attachUser, protected } = require('./authz')
 const { serverRuntimeConfig } = require('../../next.config')
-const session = require('express-session')
+const logger = require('../lib/logger')
 
 /**
  * The manageRouter handles all routes related to the first party
@@ -14,11 +16,16 @@ const session = require('express-session')
  * @param {Object} nextApp the NextJS Server
  */
 function manageRouter (nextApp) {
+  router.use('/api', expressPino({
+    logger: logger.child({ module: 'manage' })
+  }))
+
   /**
    * Attach a user session for these routes
    */
   const SESSION_SECRET = serverRuntimeConfig.SESSION_SECRET || 'super-secret-sessions'
   let sessionConfig = {
+    name: 'osm-hydra-sid',
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
