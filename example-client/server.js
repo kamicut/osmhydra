@@ -6,17 +6,19 @@ const jwt = require('jsonwebtoken')
 const oauth2 = require('simple-oauth2')
 const session = require('express-session')
 const fetch = require('node-fetch')
+const Filestore = require('session-file-store')(session)
+const path = require('path')
 
 const app = express()
 app.use(bodyParser.json())
 app.use(compression())
 app.use(boom())
-app.set('view engine', 'ejs');
 app.use(session({ 
   name: 'osm-hydra-example', 
   resave: true,
   secret: 'super-secret',
-  saveUninitialized: true 
+  saveUninitialized: true ,
+  store: new Filestore({ path: path.join(require("os").tmpdir(), 'osm-hydra-example')})
 }))
 
 /**
@@ -92,9 +94,8 @@ async function callback (req, res) {
       // in a database
       if (!req.app.locals.tokens) req.app.locals.tokens = {}
       req.app.locals.tokens[sub] = result.access_token
-      console.log(req.app.locals.tokens)
 
-      res.redirect('/user')
+      res.redirect('/user.html')
     } catch (error) {
       console.error(error)
       return res.status(500).json('Authentication failed')
@@ -103,9 +104,9 @@ async function callback (req, res) {
 }
 
 /**
- * Render the user page
+ * Get all profile data
  */
-async function user (req, res) {
+async function profile (req, res) {
   const { uid, username, picture } = req.session.user
   const token = req.app.locals.tokens[uid]
 
@@ -122,20 +123,16 @@ async function user (req, res) {
       res.status(500).send('Could not fetch user data')
     })
 
-  console.log(places)
-
-  return res.render('user', {
-    uid, username, picture, places
-  })
+  return res.json( { places, username, picture, uid })
 }
 
 /** 
  * Routes
  */
-app.get('/', (req, res) => res.render('index'))
+app.use(express.static('public'))
 app.post('/auth', bodyParser.urlencoded({ extended: false }), authorizationFlow)
 app.get('/callback', callback)
-app.get('/user', user)
+app.get('/profile', profile)
 
 /**
  * Error handler
