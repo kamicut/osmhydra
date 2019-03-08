@@ -31,8 +31,6 @@ const OsmoseFrame = function ({ places }) {
   )
 }
 
-
-
 class Profile extends React.Component {
   constructor (props) {
     super(props)
@@ -82,7 +80,7 @@ class Profile extends React.Component {
             }, username)
           ]
         ),
-        h('p', { className: "measure-copy lh-copy"}, "Fix errors osmose has found in your places"),
+        h('p', { className: "measure-copy lh-copy"}, "Fix errors osmose has found in your places!"),
         h(OsmoseFrame, { places })
       ]
     )

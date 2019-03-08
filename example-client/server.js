@@ -10,6 +10,18 @@ const Filestore = require('session-file-store')(session)
 const path = require('path')
 
 const app = express()
+
+/**
+ * Variables
+ */
+const PORT = process.env.PORT || 9090
+const TOKEN_HOST = process.env.TOKEN_HOST || 'http://localhost:4444'
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`
+const API_URL = process.env.API_URL || `http://localhost:8989`
+
+/**
+ * Middleware
+ */
 app.use(bodyParser.json())
 app.use(compression())
 app.use(boom())
@@ -37,7 +49,7 @@ function authorizationFlow (req, res)  {
       secret: clientSecret
     },
     auth: {
-      tokenHost: 'http://localhost:4444',
+      tokenHost: TOKEN_HOST,
       tokenPath: '/oauth2/token',
       authorizePath: '/oauth2/auth'
     }
@@ -47,7 +59,7 @@ function authorizationFlow (req, res)  {
 
   // Create an authorization code url request
   const authorizationUri = oauth.authorizationCode.authorizeURL({
-    redirect_uri: 'http://127.0.0.1:9090/callback',
+    redirect_uri: `${APP_URL}/callback`,
     scope: 'openid offline',
     state
   })
@@ -74,7 +86,7 @@ async function callback (req, res) {
     // Create options for token exchange
     const options = {
       code,
-      redirect_uri: 'http://127.0.0.1:9090/callback'
+      redirect_uri: `${APP_URL}/callback`
     }
 
     try {
@@ -111,7 +123,7 @@ async function profile (req, res) {
   const token = req.app.locals.tokens[uid]
 
   let { places } = await fetch(
-    'http://localhost:8989/api/places', {
+    `${API_URL}/api/places`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -143,7 +155,6 @@ app.use(function (err, req, res, next) {
   res.send(err)
 })
 
-const PORT = process.env.PORT || 9090
 app.listen(PORT, () => {
   console.log(`Starting server on port ${PORT}`)
 })
