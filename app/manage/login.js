@@ -10,6 +10,7 @@ const credentials = {
   auth: {
     tokenHost: serverRuntimeConfig.HYDRA_TOKEN_URL,
     tokenPath: '/oauth2/token',
+    authorizeHost: serverRuntimeConfig.HYDRA_AUTHZ_URL || serverRuntimeConfig.HYDRA_TOKEN_URL,
     authorizePath: '/oauth2/auth'
   }
 }

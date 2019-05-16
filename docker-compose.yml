@@ -1,24 +1,8 @@
 version: '2'
 
 services:
-  # db: 
-  #   image: mdillon/postgis:9.6-alpine
-  #   environment:
-  #     POSTGRES_PASSWORD: hydra
-  #     POSTGRES_USER: osm
-  #     POSTGRES_DB: osmhydra
-  #   ports:
-  #     - 5499:5432
-  
-  api:
-    build: .
-    ports:
-      - 8989:8989
-
   hydra:
-    image: oryd/hydra:v1.0.0-rc.6_oryOS.10
-    # links:
-    # - db:db
+    image: oryd/hydra:v1.0.0-rc.11
     ports:
     - 4444:4444
     - 4445:4445
@@ -26,7 +10,21 @@ services:
     command:  
       serve all --dangerous-force-http
     environment:
-      - OAUTH2_ISSUER_URL=http://localhost:4444
-      - OAUTH2_CONSENT_URL=http://localhost:8989/oauth/consent
-      - OAUTH2_LOGIN_URL=http://localhost:8989/oauth/login
-      - DATABASE_URL=memory
+      - URLS_SELF_ISSUER=http://localhost:4444
+      - URLS_CONSENT=http://localhost:8989/oauth/consent
+      - URLS_LOGIN=http://localhost:8989/oauth/login
+    env_file:
+      docker.env
+    
+  app:
+    build: .
+    depends_on:
+    - hydra
+    environment:
+     - HYDRA_ADMIN_URL=http://hydra:4445
+     - HYDRA_TOKEN_URL=http://hydra:4444
+     - HYDRA_AUTHZ_URL=http://localhost:4444
+    ports:
+    - 8989:8989
+    env_file:
+      docker.env

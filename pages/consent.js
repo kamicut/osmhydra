@@ -67,8 +67,8 @@ class Consent extends Component {
             <label className="pl2" htmlFor="remember">Do not ask me again</label>
           </p>
           <p>
-            <input type="submit" name="submit" value="Allow access" />
-            <input type="submit" name="submit" value="Deny access" />
+            <input type="submit" id="accept" name="submit" value="Allow access" />
+            <input type="submit" id="reject" name="submit" value="Deny access" />
           </p>
         </form>
       </section>

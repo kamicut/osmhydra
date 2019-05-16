@@ -1,5 +1,6 @@
 .next
 .env
+docker.env
 node_modules
 .vscode
 *.db
