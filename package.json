@@ -16,7 +16,7 @@
     "express-pino-logger": "^4.0.0",
     "express-promise-router": "^3.0.3",
     "express-session": "^1.15.6",
-    "jsonwebtoken": "^8.5.0",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^0.16.3",
     "next": "^8.0.1",
     "node-fetch": "^2.3.0",
